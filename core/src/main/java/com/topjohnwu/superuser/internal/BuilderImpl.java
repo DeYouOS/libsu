@@ -21,6 +21,7 @@ import static com.topjohnwu.superuser.Shell.FLAG_NON_ROOT_SHELL;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
@@ -96,24 +97,28 @@ public final class BuilderImpl extends Shell.Builder {
     @Override
     public ShellImpl build() {
         ShellImpl shell = null;
-
+        Log.d("Virtual", "build");
         // Root mount master
         if (!hasFlags(FLAG_NON_ROOT_SHELL) && hasFlags(FLAG_MOUNT_MASTER)) {
+            Log.d("Virtual", "hasFlags(FLAG_NON_ROOT_SHELL) && hasFlags(FLAG_MOUNT_MASTER)");
             try {
                 shell = build("virtual su", "--mount-master");
                 if (!shell.isRoot())
                     shell = null;
             } catch (NoShellException ignore) {}
+            Log.d("Virtual", "virtual su --mount-master");
         }
 
         // Normal root shell
         if (shell == null && !hasFlags(FLAG_NON_ROOT_SHELL)) {
+            Log.d("Virtual", "hasFlags(FLAG_NON_ROOT_SHELL)");
             try {
                 shell = build("virtual su");
                 if (!shell.isRoot()) {
                     shell = null;
                 }
             } catch (NoShellException ignore) {}
+            Log.d("Virtual", "virtual su");
         }
 
         // Try normal non-root shell
@@ -122,6 +127,7 @@ public final class BuilderImpl extends Shell.Builder {
                 Utils.setConfirmedRootState(false);
             }
             shell = build("sh");
+            Log.d("Virtual", "sh");
         }
 
         return shell;
